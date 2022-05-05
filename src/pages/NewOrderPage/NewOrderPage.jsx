@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import * as itemsAPI from '../../utilities/items-api';
+import * as ordersAPI from '../../utilities/orders-api'
 import './NewOrderPage.css';
 import { Link } from 'react-router-dom';
 import Logo from '../../components/Logo/Logo';
@@ -11,6 +12,7 @@ import UserLogOut from '../../components/UserLogOut/UserLogOut';
 export default function NewOrderPage({ user, setUser }) {
   const [menuItems, setMenuItems] = useState([]);
   const [activeCat, setActiveCat] = useState('');
+  const [cart, setCart] = useState(null)
   // Obtain a ref object
   const categoriesRef = useRef([]);
 
@@ -29,6 +31,12 @@ export default function NewOrderPage({ user, setUser }) {
       setMenuItems(items);
     }
     getItems();
+    async function getCart() {
+      const cart = await ordersAPI.getCart()
+      setCart(cart)
+    }
+    getCart()
+
   }, []);
   // the empty dependency array above will result in 
   // the function running after the FIRST render
@@ -49,7 +57,7 @@ export default function NewOrderPage({ user, setUser }) {
       <MenuList
         menuItems={menuItems.filter(item => item.category.name === activeCat)}
       />
-      <OrderDetail />
+      <OrderDetail order={cart} />
     </main>
   );
 }

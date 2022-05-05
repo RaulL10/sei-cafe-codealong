@@ -41,5 +41,13 @@ const orderSchema = new Schema({
     return this.id.slice(-6).toUpperCase();
   });
 
+orderSchema.statics.getCart = function(userId) {
+  return this.findOneAndUpdate(
+    {user: userId, isPaid: false},
+    {user: userId},
+    {upsert: true, new: true}
+  )
+}
+
 
 module.exports = mongoose.model('Order', orderSchema)
